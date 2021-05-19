@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/danielgom/bookstore_oauthapi/src/datasource/clients/cassandra"
 	"github.com/danielgom/bookstore_oauthapi/src/http"
 	"github.com/danielgom/bookstore_oauthapi/src/repository/db"
 	"github.com/danielgom/bookstore_oauthapi/src/repository/usersdb"
@@ -15,6 +16,8 @@ var (
 )
 
 func StartApplication() {
+
+	cassandra.Init()
 
 	router.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Skipper:          nil,

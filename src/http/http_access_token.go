@@ -30,7 +30,7 @@ func (handler *accessTokenHandler) GetById(c echo.Context) error {
 
 	aT, err := handler.service.GetByID(c.Param("atId"))
 	if err != nil {
-		return echo.NewHTTPError(err.Status, err)
+		return echo.NewHTTPError(err.Status(), err)
 	}
 
 	return c.JSON(http.StatusOK, aT)
@@ -41,12 +41,12 @@ func (handler *accessTokenHandler) Create(c echo.Context) error {
 
 	if err := c.Bind(request); err != nil {
 		restErr := errors.NewBadRequestError("Invalid json body")
-		return echo.NewHTTPError(restErr.Status, restErr)
+		return echo.NewHTTPError(restErr.Status(), restErr)
 	}
 
 	at, err := handler.service.Create(request)
 	if err != nil {
-		return echo.NewHTTPError(err.Status, err)
+		return echo.NewHTTPError(err.Status(), err)
 	}
 
 	return c.JSON(http.StatusCreated, at)

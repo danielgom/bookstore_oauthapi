@@ -29,7 +29,7 @@ type AtRequest struct {
 	ClientSecret string `json:"clientSecret"`
 }
 
-func (request *AtRequest) Validate() *errors.RestErr {
+func (request *AtRequest) Validate() errors.RestErr {
 	switch request.GrantType {
 	case grantTypePassword:
 
@@ -50,17 +50,18 @@ type AccessToken struct {
 	Expires     int64  `json:"expires"`
 }
 
-func (at *AccessToken) Validate() *errors.RestErr {
+func (at *AccessToken) Validate() errors.RestErr {
 
 	if at == nil {
 		return errors.NewBadRequestError("Access token pointer is nil")
 	}
+
 	at.AccessToken = strings.TrimSpace(at.AccessToken)
 	if at.AccessToken == "" {
 		return errors.NewBadRequestError("Invalid access token")
 	}
 
-	if at.UserId <= 0 && at.UserId == 0 {
+	if at.UserId <= 0 {
 		return errors.NewBadRequestError("Invalid user id")
 	}
 

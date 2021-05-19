@@ -11,6 +11,119 @@ func TestAccessTokenConstants(t *testing.T) {
 	}
 }
 
+func TestAtRequestValidate(t *testing.T) {
+
+	t.Run("Should throw error on invalid validation", func(t *testing.T) {
+		atR := &AtRequest{
+			GrantType: "none",
+		}
+
+		err := atR.Validate()
+
+		if err == nil {
+			t.Error("error should not be nil")
+		}
+	})
+
+	t.Run("Should pass the validation with password grant_type", func(t *testing.T) {
+		atR := &AtRequest{
+			GrantType: "password",
+		}
+
+		err := atR.Validate()
+
+		if err != nil {
+			t.Error("error should be nil")
+		}
+	})
+
+	t.Run("Should pass the validation with credentials grant_type", func(t *testing.T) {
+		atR := &AtRequest{
+			GrantType: "clientCredentials",
+		}
+
+		err := atR.Validate()
+
+		if err != nil {
+			t.Error("error should be nil")
+		}
+	})
+}
+
+func TestAccessTokenValidate(t *testing.T) {
+
+	t.Run("Should pass the access token validation", func(t *testing.T) {
+		aT := &AccessToken{
+			AccessToken: "12345",
+			UserId:      1,
+			ClientId:    2,
+			Expires:     3456,
+		}
+		err := aT.Validate()
+
+		if err != nil {
+			t.Error("error should be nil")
+		}
+	})
+
+	t.Run("Should throw error when access token is nil", func(t *testing.T) {
+		var aT AccessToken
+		err := aT.Validate()
+
+		if err == nil {
+			t.Error("error should not be nil")
+		}
+	})
+	t.Run("Should throw error when access token string is empty or nil", func(t *testing.T) {
+		aT := &AccessToken{
+			AccessToken: "",
+		}
+		err := aT.Validate()
+
+		if err == nil {
+			t.Error("error should not be nil")
+		}
+	})
+	t.Run("Should throw error when the user id is 0", func(t *testing.T) {
+		aT := &AccessToken{
+			AccessToken: "12345",
+			UserId:      0,
+		}
+		err := aT.Validate()
+
+		if err == nil {
+			t.Error("error should not be nil")
+		}
+	})
+	t.Run("Should throw error when expires is 0", func(t *testing.T) {
+		aT := &AccessToken{
+			AccessToken: "12345",
+			UserId:      1,
+			ClientId:    1,
+			Expires:     0,
+		}
+		err := aT.Validate()
+
+		if err == nil {
+			t.Error("error should not be nil")
+		}
+	})
+
+	t.Run("Should throw error when the client id is 0", func(t *testing.T) {
+		aT := &AccessToken{
+			AccessToken: "12345",
+			UserId:      1,
+			ClientId:    0,
+		}
+		err := aT.Validate()
+
+		if err == nil {
+			t.Error("error should not be nil")
+		}
+	})
+
+}
+
 func TestGetNewAccessToken(t *testing.T) {
 	at := GetNewAccessToken(0)
 	if at.IsExpired() {

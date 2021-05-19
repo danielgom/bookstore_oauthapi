@@ -13,17 +13,17 @@ func NewService(dbRepo db.DRepository, usersRepo usersdb.UsersRepository) Servic
 }
 
 type Service interface {
-	GetByID(string) (*accesstoken.AccessToken, *errors.RestErr)
-	Create(request *accesstoken.AtRequest) (*accesstoken.AccessToken, *errors.RestErr)
-	UpdateExpirationTime(*accesstoken.AccessToken) *errors.RestErr
+	GetByID(string) (*accesstoken.AccessToken, errors.RestErr)
+	Create(request *accesstoken.AtRequest) (*accesstoken.AccessToken, errors.RestErr)
+	UpdateExpirationTime(*accesstoken.AccessToken) errors.RestErr
 }
 
 type service struct {
-	dbRepository    db.DRepository
+	DbRepository    db.DRepository
 	usersRepository usersdb.UsersRepository
 }
 
-func (s *service) GetByID(id string) (*accesstoken.AccessToken, *errors.RestErr) {
+func (s *service) GetByID(id string) (*accesstoken.AccessToken, errors.RestErr) {
 
 	atId := strings.TrimSpace(id)
 
@@ -31,7 +31,7 @@ func (s *service) GetByID(id string) (*accesstoken.AccessToken, *errors.RestErr)
 		return nil, errors.NewBadRequestError("Invalid access token id")
 	}
 
-	at, err := s.dbRepository.GetByID(atId)
+	at, err := s.DbRepository.GetByID(atId)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (s *service) GetByID(id string) (*accesstoken.AccessToken, *errors.RestErr)
 	return at, nil
 }
 
-func (s *service) Create(request *accesstoken.AtRequest) (*accesstoken.AccessToken, *errors.RestErr) {
+func (s *service) Create(request *accesstoken.AtRequest) (*accesstoken.AccessToken, errors.RestErr) {
 
 	if err := request.Validate(); err != nil {
 		return nil, err
@@ -54,16 +54,16 @@ func (s *service) Create(request *accesstoken.AtRequest) (*accesstoken.AccessTok
 
 	at := accesstoken.GetNewAccessToken(user.Id)
 
-	if err = s.dbRepository.Create(at); err != nil {
+	if err = s.DbRepository.Create(at); err != nil {
 		return nil, err
 	}
 
 	return at, nil
 }
 
-func (s *service) UpdateExpirationTime(at *accesstoken.AccessToken) *errors.RestErr {
+func (s *service) UpdateExpirationTime(at *accesstoken.AccessToken) errors.RestErr {
 	if err := at.Validate(); err != nil {
 		return err
 	}
-	return s.dbRepository.UpdateExpirationTime(at)
+	return s.DbRepository.UpdateExpirationTime(at)
 }

@@ -33,8 +33,8 @@ func TestLoginUserTimeout(t *testing.T) {
 	if restErr == nil {
 		t.Error("Error should not be a nil value")
 	}
-	if restErr != nil && restErr.Message != expectedString {
-		t.Errorf("\n Expected: %s, \n Received: %s", expectedString, restErr.Message)
+	if restErr != nil && restErr.Message() != expectedString {
+		t.Errorf("\n Expected: %s, \n Received: %s", expectedString, restErr.Message())
 	}
 }
 
@@ -64,11 +64,11 @@ func TestLoginUserInvalidErrorInterface(t *testing.T) {
 	if restErr == nil {
 		t.Error("Error should not be a nil value")
 	}
-	if restErr != nil && restErr.Status != 500 {
+	if restErr != nil && restErr.Status() != 500 {
 		t.Error("Status returned should be 500")
 	}
-	if restErr != nil && restErr.Message != expectedString {
-		t.Errorf("\n Expected: %s, \n Received: %s", expectedString, restErr.Message)
+	if restErr != nil && restErr.Message() != expectedString {
+		t.Errorf("\n Expected: %s, \n Received: %s", expectedString, restErr.Message())
 	}
 }
 
@@ -98,11 +98,11 @@ func TestLoginUserInvalidCredentials(t *testing.T) {
 	if restErr == nil {
 		t.Error("Error should not be a nil value")
 	}
-	if restErr != nil && restErr.Status != 400 {
+	if restErr != nil && restErr.Status() != 400 {
 		t.Error("Status returned should be 400")
 	}
-	if restErr != nil && restErr.Message != expectedString {
-		t.Errorf("\n Expected: %s, \n Received: %s", expectedString, restErr.Message)
+	if restErr != nil && restErr.Message() != expectedString {
+		t.Errorf("\n Expected: %s, \n Received: %s", expectedString, restErr.Message())
 	}
 }
 
@@ -132,11 +132,11 @@ func TestLoginUserEmailNotFound(t *testing.T) {
 	if restErr == nil {
 		t.Error("Error should not be a nil value")
 	}
-	if restErr != nil && restErr.Status != 404 {
+	if restErr != nil && restErr.Status() != 404 {
 		t.Error("Status returned should be 404")
 	}
-	if restErr != nil && restErr.Message != expectedString {
-		t.Errorf("\n Expected: %s, \n Received: %s", expectedString, restErr.Message)
+	if restErr != nil && restErr.Message() != expectedString {
+		t.Errorf("\n Expected: %s, \n Received: %s", expectedString, restErr.Message())
 	}
 }
 
@@ -166,11 +166,11 @@ func TestLoginUserInvalidJsonResponse(t *testing.T) {
 	if restErr == nil {
 		t.Error("Error should not be a nil value")
 	}
-	if restErr != nil && restErr.Status != 500 {
+	if restErr != nil && restErr.Status() != 500 {
 		t.Error("Status returned should be 500")
 	}
-	if restErr != nil && restErr.Message != expectedString {
-		t.Errorf("\n Expected: %s, \n Received: %s", expectedString, restErr.Message)
+	if restErr != nil && restErr.Message() != expectedString {
+		t.Errorf("\n Expected: %s, \n Received: %s", expectedString, restErr.Message())
 	}
 }
 

@@ -1,23 +1,18 @@
 package cassandra
 
 import (
+	"github.com/danielgom/bookstore_oauthapi/src/repository/db"
 	"github.com/gocql/gocql"
 )
 
-var session *gocql.Session
-
-func init() {
+func Init() {
 
 	cluster := gocql.NewCluster("127.0.0.1")
 	cluster.Keyspace = "oauth"
 	cluster.Consistency = gocql.Quorum
 
 	var err error
-	if session, err = cluster.CreateSession(); err != nil {
+	if db.Session, err = cluster.CreateSession(); err != nil {
 		panic(err)
 	}
-}
-
-func GetSession() *gocql.Session {
-	return session
 }

@@ -12,7 +12,7 @@ import (
 )
 
 type HTTPClient interface {
-	Do(req *http.Request) (*http.Response, error)
+	Do(*http.Request) (*http.Response, error)
 }
 
 var (
@@ -28,13 +28,13 @@ func NewRepository() UsersRepository {
 }
 
 type UsersRepository interface {
-	LoginUser(string, string) (*users.User, *errors.RestErr)
+	LoginUser(string, string) (*users.User, errors.RestErr)
 }
 
 type usersRepository struct {
 }
 
-func (u *usersRepository) LoginUser(email, password string) (*users.User, *errors.RestErr) {
+func (u *usersRepository) LoginUser(email, password string) (*users.User, errors.RestErr) {
 
 	request := users.LoginRequest{
 		Email:    email,
@@ -52,29 +52,31 @@ func (u *usersRepository) LoginUser(email, password string) (*users.User, *error
 	resp, err := Client.Do(r)
 
 	if err != nil {
-		return nil, errors.NewInternalServerError("Invalid response from user API while trying to login")
+		return nil, errors.NewInternalServerError("Invalid response from user API while trying to login", err)
 	}
 
 	defer func() {
 		err := resp.Body.Close()
 		if err != nil {
+			// Todo: handle error
+			return
 		}
 	}()
 
 	respBody, _ := io.ReadAll(resp.Body)
 
 	if resp.StatusCode > 399 {
-		restErr := new(errors.RestErr)
-		err = json.Unmarshal(respBody, restErr)
+
+		apiErr, err := errors.NewRestErrorFromBytes(respBody)
 		if err != nil {
-			return nil, errors.NewInternalServerError("Invalid error interface when trying to login the user")
+			return nil, errors.NewInternalServerError("Invalid error interface when trying to login the user", err)
 		}
-		return nil, restErr
+		return nil, apiErr
 	}
 
 	user := new(users.User)
 	if err = json.Unmarshal(respBody, user); err != nil {
-		return nil, errors.NewInternalServerError("Error when trying to unmarshal user response")
+		return nil, errors.NewInternalServerError("Error when trying to unmarshal user response", err)
 	}
 
 	return user, nil
