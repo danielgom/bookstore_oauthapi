@@ -1,13 +1,14 @@
 package accesstoken
 
 import (
-	errors2 "errors"
 	"github.com/danielgom/bookstore_oauthapi/src/domain/accesstoken"
-	"github.com/danielgom/bookstore_oauthapi/src/domain/users"
+	"github.com/danielgom/bookstore_oauthapi/src/services/accesstoken/mocks"
 	"github.com/danielgom/bookstore_utils-go/errors"
+	"github.com/golang/mock/gomock"
 	"testing"
 )
 
+/*
 type MockGetById func(id string) (*accesstoken.AccessToken, errors.RestErr)
 type MockCreate func(at *accesstoken.AccessToken) errors.RestErr
 type MockUpdateExpirationTime func(at *accesstoken.AccessToken) errors.RestErr
@@ -284,4 +285,80 @@ func TestServiceUpdateExpirationTime(t *testing.T) {
 			t.Error("error should not be nil")
 		}
 	})
+}
+ */
+
+func TestServiceGetByID(t *testing.T) {
+
+	t.Run("Should throw error when id is 0", func(t *testing.T) {
+		mockService := service{
+			DbRepository:    nil,
+			usersRepository: nil,
+		}
+		atID := ""
+		at, err := mockService.GetByID(atID)
+
+		if at != nil {
+			t.Error("access token should be nil")
+		}
+
+		if err == nil {
+			t.Error("error should not be nil")
+		}
+	})
+
+	t.Run("Should return db error", func(t *testing.T) {
+
+		mockCtrl := gomock.NewController(t)
+		defer mockCtrl.Finish()
+
+		mockDRepository := mocks.NewMockDRepository(mockCtrl)
+
+		mockDRepository.EXPECT().GetByID("22").
+			Return(nil, errors.NewNotFoundError("No access token found with given id"))
+
+		MockService := service{
+			DbRepository: mockDRepository,
+		}
+		atString := "22"
+		aT, err := MockService.GetByID(atString)
+
+		if aT != nil {
+			t.Error("access token should be nil")
+		}
+
+		if err == nil {
+			t.Error("error should not be nil")
+		}
+	})
+
+	t.Run("Should return access token", func(t *testing.T) {
+		mockCtrl := gomock.NewController(t)
+
+		mockDRepository := mocks.NewMockDRepository(mockCtrl)
+
+		mockDRepository.EXPECT().GetByID("123456").Return(&accesstoken.AccessToken{
+			AccessToken: "123456",
+			UserId:      123,
+			ClientId:    456,
+			Expires:     365,
+		}, nil)
+
+		mockService := &service{
+			DbRepository:    mockDRepository,
+		}
+
+		tString := "123456"
+
+		aT, err := mockService.GetByID(tString)
+
+		if err != nil {
+			t.Error("error should be nil")
+		}
+
+		if aT == nil {
+			t.Error("access token should not be nil")
+		}
+	})
+
 }

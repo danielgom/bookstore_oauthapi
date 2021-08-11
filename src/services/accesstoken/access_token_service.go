@@ -14,7 +14,7 @@ func NewService(dbRepo db.DRepository, usersRepo usersdb.UsersRepository) Servic
 
 type Service interface {
 	GetByID(string) (*accesstoken.AccessToken, errors.RestErr)
-	Create(request *accesstoken.AtRequest) (*accesstoken.AccessToken, errors.RestErr)
+	Create(*accesstoken.AtRequest) (*accesstoken.AccessToken, errors.RestErr)
 	UpdateExpirationTime(*accesstoken.AccessToken) errors.RestErr
 }
 

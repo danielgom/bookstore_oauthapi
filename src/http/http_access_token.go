@@ -22,13 +22,13 @@ type accessTokenHandler struct {
 	service accesstoken.Service
 }
 
-func (handler *accessTokenHandler) Health(c echo.Context) error {
+func (h *accessTokenHandler) Health(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"Status": "Ready to rumble"})
 }
 
-func (handler *accessTokenHandler) GetById(c echo.Context) error {
+func (h *accessTokenHandler) GetById(c echo.Context) error {
 
-	aT, err := handler.service.GetByID(c.Param("atId"))
+	aT, err := h.service.GetByID(c.Param("atId"))
 	if err != nil {
 		return echo.NewHTTPError(err.Status(), err)
 	}
@@ -36,7 +36,7 @@ func (handler *accessTokenHandler) GetById(c echo.Context) error {
 	return c.JSON(http.StatusOK, aT)
 }
 
-func (handler *accessTokenHandler) Create(c echo.Context) error {
+func (h *accessTokenHandler) Create(c echo.Context) error {
 	request := new(atDomain.AtRequest)
 
 	if err := c.Bind(request); err != nil {
@@ -44,7 +44,7 @@ func (handler *accessTokenHandler) Create(c echo.Context) error {
 		return echo.NewHTTPError(restErr.Status(), restErr)
 	}
 
-	at, err := handler.service.Create(request)
+	at, err := h.service.Create(request)
 	if err != nil {
 		return echo.NewHTTPError(err.Status(), err)
 	}

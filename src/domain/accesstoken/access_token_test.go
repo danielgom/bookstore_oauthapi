@@ -6,14 +6,17 @@ import (
 )
 
 func TestAccessTokenConstants(t *testing.T) {
+
 	if expirationTime != 24 {
 		t.Error("Expiration time should be 24 hours")
 	}
 }
 
 func TestAtRequestValidate(t *testing.T) {
+	t.Parallel()
 
 	t.Run("Should throw error on invalid validation", func(t *testing.T) {
+		t.Parallel()
 		atR := &AtRequest{
 			GrantType: "none",
 		}
@@ -26,6 +29,7 @@ func TestAtRequestValidate(t *testing.T) {
 	})
 
 	t.Run("Should pass the validation with password grant_type", func(t *testing.T) {
+		t.Parallel()
 		atR := &AtRequest{
 			GrantType: "password",
 		}
@@ -38,6 +42,7 @@ func TestAtRequestValidate(t *testing.T) {
 	})
 
 	t.Run("Should pass the validation with credentials grant_type", func(t *testing.T) {
+		t.Parallel()
 		atR := &AtRequest{
 			GrantType: "clientCredentials",
 		}
@@ -51,8 +56,10 @@ func TestAtRequestValidate(t *testing.T) {
 }
 
 func TestAccessTokenValidate(t *testing.T) {
+	t.Parallel()
 
 	t.Run("Should pass the access token validation", func(t *testing.T) {
+		t.Parallel()
 		aT := &AccessToken{
 			AccessToken: "12345",
 			UserId:      1,
@@ -67,6 +74,7 @@ func TestAccessTokenValidate(t *testing.T) {
 	})
 
 	t.Run("Should throw error when access token is nil", func(t *testing.T) {
+		t.Parallel()
 		var aT AccessToken
 		err := aT.Validate()
 
@@ -75,6 +83,7 @@ func TestAccessTokenValidate(t *testing.T) {
 		}
 	})
 	t.Run("Should throw error when access token string is empty or nil", func(t *testing.T) {
+		t.Parallel()
 		aT := &AccessToken{
 			AccessToken: "",
 		}
@@ -85,6 +94,7 @@ func TestAccessTokenValidate(t *testing.T) {
 		}
 	})
 	t.Run("Should throw error when the user id is 0", func(t *testing.T) {
+		t.Parallel()
 		aT := &AccessToken{
 			AccessToken: "12345",
 			UserId:      0,
@@ -96,6 +106,7 @@ func TestAccessTokenValidate(t *testing.T) {
 		}
 	})
 	t.Run("Should throw error when expires is 0", func(t *testing.T) {
+		t.Parallel()
 		aT := &AccessToken{
 			AccessToken: "12345",
 			UserId:      1,
@@ -110,6 +121,7 @@ func TestAccessTokenValidate(t *testing.T) {
 	})
 
 	t.Run("Should throw error when the client id is 0", func(t *testing.T) {
+		t.Parallel()
 		aT := &AccessToken{
 			AccessToken: "12345",
 			UserId:      1,
@@ -125,6 +137,7 @@ func TestAccessTokenValidate(t *testing.T) {
 }
 
 func TestGetNewAccessToken(t *testing.T) {
+	t.Parallel()
 	at := GetNewAccessToken(0)
 	if at.IsExpired() {
 		t.Error("Brand access token should not be nil")
@@ -140,6 +153,7 @@ func TestGetNewAccessToken(t *testing.T) {
 }
 
 func TestIsExpired(t *testing.T) {
+	t.Parallel()
 	at := AccessToken{}
 	if !at.IsExpired() {
 		t.Error("Empty access token should be expired by default")
